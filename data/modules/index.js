@@ -2,7 +2,8 @@ var InitModule = function (ctx, logger, nk, initializer) {
     initializer.registerRpc("ChannelMessageSend", serverRpc);
     initializer.registerRpc("turnMessageSend", rtBeturnMessageSend);
     initializer.registerRpc("test", serverRpc);
-    logger.debug("RrrRR");
+    initializer.registerRpc("deliy", rpcReward);
+    logger.debug("Rro7orRR");
     initializer.registerMatch(moduleName, {
         matchInit: matchInit,
         matchJoinAttempt: matchJoinAttempt,
@@ -51,7 +52,6 @@ var winningPositions = [
     [2, 4, 6],
 ];
 var matchInit = function (ctx, logger, nk, params) {
-    logger.debug('Lobby match created');
     return {
         state: { Debug: true },
         tickRate: 10,
@@ -243,9 +243,11 @@ var matchLoop = function (ctx, logger, nk, dispatcher, tick, state, messages) {
     return { state: state };
 };
 var matchTerminate = function (ctx, logger, nk, dispatcher, tick, state, graceSeconds) {
+    logger.info('matchTerminate!!!!!!!!!!!!!!!!!!');
     return { state: state };
 };
 var matchSignal = function (ctx, logger, nk, dispatcher, tick, state) {
+    logger.info('matchSignal!!!!!!!!!!!!!!!!!!');
     return { state: state };
 };
 function calculateDeadlineTicks(l) {

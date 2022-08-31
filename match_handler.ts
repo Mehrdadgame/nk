@@ -63,7 +63,6 @@ interface State {
 }
 
 const matchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: {[key: string]: string}): {state: nkruntime.MatchState, tickRate: number, label: string} {
-    logger.debug('Lobby match created');
   
 	return {
 	  state: { Debug: true },

@@ -7,7 +7,8 @@
     "removeComments": true,
     "target": "ES5",
     "strict": false,
-    "outFile": "build/index.js",
+    "outFile": "data/modules/index.js",
+   
   },
   "files": [
     "./node_modules/nakama-runtime/index.d.ts",
