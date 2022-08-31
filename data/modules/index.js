@@ -3,6 +3,7 @@ var InitModule = function (ctx, logger, nk, initializer) {
     initializer.registerRpc("turnMessageSend", rtBeturnMessageSend);
     initializer.registerRpc("test", serverRpc);
     initializer.registerRpc("deliy", rpcReward);
+    initializer.registerRpc("rrr", rpcHandleMatchEnd);
     logger.debug("Rro7orRR");
     initializer.registerMatch(moduleName, {
         matchInit: matchInit,
@@ -106,141 +107,19 @@ var matchLeave = function (ctx, logger, nk, dispatcher, tick, state, presences) 
     return { state: state };
 };
 var matchLoop = function (ctx, logger, nk, dispatcher, tick, state, messages) {
-    var _a;
-    logger.debug('Running match loop. Tick: %d', tick);
-    if (connectedPlayers(state) + state.joinsInProgress === 0) {
-        state.emptyTicks++;
-        if (state.emptyTicks >= maxEmptySec * tickRate) {
-            logger.info('closing idle match');
-            return null;
-        }
-    }
-    var t = msecToSec(Date.now());
-    if (!state.playing) {
-        for (var userID in state.presences) {
-            if (state.presences[userID] === null) {
-                delete state.presences[userID];
-            }
-        }
-        if (Object.keys(state.presences).length < 2 && state.label.open != 1) {
-            state.label.open = 1;
-            var labelJSON = JSON.stringify(state.label);
-            dispatcher.matchLabelUpdate(labelJSON);
-        }
-        if (Object.keys(state.presences).length < 2) {
-            return { state: state };
-        }
-        if (state.nextGameRemainingTicks > 0) {
-            state.nextGameRemainingTicks--;
-            return { state: state };
-        }
-        state.playing = true;
-        state.board = new Array(9);
-        state.marks = {};
-        var marks_1 = [Mark.X, Mark.O];
-        Object.keys(state.presences).forEach(function (userId) {
-            var _a;
-            state.marks[userId] = (_a = marks_1.shift()) !== null && _a !== void 0 ? _a : null;
-        });
-        state.mark = Mark.X;
-        state.winner = null;
-        state.winnerPositions = null;
-        state.deadlineRemainingTicks = calculateDeadlineTicks(state.label);
-        state.nextGameRemainingTicks = 0;
-        var msg = {
-            board: state.board,
-            marks: state.marks,
-            mark: state.mark,
-            deadline: t + Math.floor(state.deadlineRemainingTicks / tickRate),
-        };
-        dispatcher.broadcastMessage(OpCode.START, JSON.stringify(msg));
-        return { state: state };
-    }
-    for (var _i = 0, messages_1 = messages; _i < messages_1.length; _i++) {
-        var message = messages_1[_i];
-        switch (message.opCode) {
-            case OpCode.MOVE:
-                logger.debug('Received move message from user: %v', state.marks);
-                var mark = (_a = state.marks[message.sender.userId]) !== null && _a !== void 0 ? _a : null;
-                if (mark === null || state.mark != mark) {
-                    dispatcher.broadcastMessage(OpCode.REJECTED, null, [message.sender]);
-                    continue;
-                }
-                var msg = {};
-                try {
-                    msg = JSON.parse(nk.binaryToString(message.data));
-                }
-                catch (error) {
-                    dispatcher.broadcastMessage(OpCode.REJECTED, null, [message.sender]);
-                    logger.debug('Bad data received: %v', error);
-                    continue;
-                }
-                if (state.board[msg.position]) {
-                    dispatcher.broadcastMessage(OpCode.REJECTED, null, [message.sender]);
-                    continue;
-                }
-                state.board[msg.position] = mark;
-                state.mark = mark === Mark.O ? Mark.X : Mark.O;
-                state.deadlineRemainingTicks = calculateDeadlineTicks(state.label);
-                var _b = winCheck(state.board, mark), winner = _b[0], winningPos = _b[1];
-                if (winner) {
-                    state.winner = mark;
-                    state.winnerPositions = winningPos;
-                    state.playing = false;
-                    state.deadlineRemainingTicks = 0;
-                    state.nextGameRemainingTicks = delaybetweenGamesSec * tickRate;
-                }
-                var tie = state.board.every(function (v) { return v !== null; });
-                if (tie) {
-                    state.playing = false;
-                    state.deadlineRemainingTicks = 0;
-                    state.nextGameRemainingTicks = delaybetweenGamesSec * tickRate;
-                }
-                var opCode = void 0;
-                var outgoingMsg = void 0;
-                if (state.playing) {
-                    opCode = OpCode.UPDATE;
-                    var msg_1 = {
-                        board: state.board,
-                        mark: state.mark,
-                        deadline: t + Math.floor(state.deadlineRemainingTicks / tickRate),
-                    };
-                    outgoingMsg = msg_1;
-                }
-                else {
-                    opCode = OpCode.DONE;
-                    var msg_2 = {
-                        board: state.board,
-                        winner: state.winner,
-                        winnerPositions: state.winnerPositions,
-                        nextGameStart: t + Math.floor(state.nextGameRemainingTicks / tickRate),
-                    };
-                    outgoingMsg = msg_2;
-                }
-                dispatcher.broadcastMessage(opCode, JSON.stringify(outgoingMsg));
-                break;
-            default:
-                dispatcher.broadcastMessage(OpCode.REJECTED, null, [message.sender]);
-                logger.error('Unexpected opcode received: %d', message.opCode);
-        }
-    }
-    if (state.playing) {
-        state.deadlineRemainingTicks--;
-        if (state.deadlineRemainingTicks <= 0) {
-            state.playing = false;
-            state.winner = state.mark === Mark.O ? Mark.X : Mark.O;
-            state.deadlineRemainingTicks = 0;
-            state.nextGameRemainingTicks = delaybetweenGamesSec * tickRate;
-            var msg = {
-                board: state.board,
-                winner: state.winner,
-                nextGameStart: t + Math.floor(state.nextGameRemainingTicks / tickRate),
-                winnerPositions: null,
-            };
-            dispatcher.broadcastMessage(OpCode.DONE, JSON.stringify(msg));
-        }
-    }
-    return { state: state };
+    logger.debug('Lobby match loop executed');
+    var opCode = 1234;
+    var message = JSON.stringify({ hello: 'world' });
+    var presences = null;
+    var sender = null;
+    dispatcher.broadcastMessage(opCode, message, presences, sender, true);
+    return {
+        state: state
+    };
+};
+var rpcHandleMatchEnd = function (ctx, logger, nk, payload) {
+    logger.info('rpcHandleMatchEnd!!!!!!!!!!!!!!!!!!');
+    return payload;
 };
 var matchTerminate = function (ctx, logger, nk, dispatcher, tick, state, graceSeconds) {
     logger.info('matchTerminate!!!!!!!!!!!!!!!!!!');
