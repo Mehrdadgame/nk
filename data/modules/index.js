@@ -3,7 +3,7 @@ var InitModule = function (ctx, logger, nk, initializer) {
     initializer.registerRpc("turnMessageSend", rtBeturnMessageSend);
     initializer.registerRpc("test", serverRpc);
     initializer.registerRpc("deliy", rpcReward);
-    initializer.registerRpc("rrr", rpcHandleMatchEnd);
+    initializer.registerRpc("turn", rpcHandleMatchEnd);
     logger.debug("Rro7orRR");
     initializer.registerMatch(moduleName, {
         matchInit: matchInit,
@@ -118,7 +118,7 @@ var matchLoop = function (ctx, logger, nk, dispatcher, tick, state, messages) {
     };
 };
 var rpcHandleMatchEnd = function (ctx, logger, nk, payload) {
-    logger.info('rpcHandleMatchEnd!!!!!!!!!!!!!!!!!!');
+    logger.info(payload);
     return payload;
 };
 var matchTerminate = function (ctx, logger, nk, dispatcher, tick, state, graceSeconds) {

@@ -146,7 +146,7 @@ const matchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk
 
   let rpcHandleMatchEnd: nkruntime.RpcFunction = function(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
   //  let request  = JSON.parse(payload);
-  logger.info('rpcHandleMatchEnd!!!!!!!!!!!!!!!!!!')
+  logger.info( payload)
     return payload;
 }
 
