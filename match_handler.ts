@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const moduleName = "tic-tac-toe_js";
+const moduleName = "match";
 const tickRate = 5;
 const maxEmptySec = 30;
 const delaybetweenGamesSec = 5;
@@ -70,6 +70,24 @@ const matchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk
 	  label: ""
 	};
   };
+
+  let joinOrCreateMatch: nkruntime.RpcFunction = function (context: nkruntime.Context, logger: nkruntime.Logger, nakama: nkruntime.Nakama, payload: string): string
+  {
+      let matches: nkruntime.Match[];
+      const MatchesLimit = 1;
+      const MinimumPlayers = 1;
+      const MaxPlayers = 2;
+      var label: MatchLabel = { open: 1 , fast : 1}
+      matches = nakama.matchList(MatchesLimit, true, JSON.stringify(label), MinimumPlayers, MaxPlayers);
+      if (matches.length > 0) {
+        logger.debug(matches[0].matchId);
+          return matches[0].matchId;
+
+      }
+      return nakama.matchCreate(moduleName);
+  }
+  
+
 
 
 let matchJoinAttempt: nkruntime.MatchJoinAttemptFunction<State> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: State, presence: nkruntime.Presence, metadata: {[key: string]: any}) {

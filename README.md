@@ -53,7 +53,7 @@ You can run the servers with native binaries for your platform.
 3. Run a migration which will setup or upgrade the database schema:
 
    ```shell
-   nakama migrate up --database.address "root@127.0.0.1:26257"
+   ./nakama migrate up --database.address "root@127.0.0.1:26257"
    ```
 
 4. Start Nakama and connect to the database:

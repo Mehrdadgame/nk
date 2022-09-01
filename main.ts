@@ -20,6 +20,8 @@ let InitModule: nkruntime.InitModule = function (ctx: nkruntime.Context, logger:
     initializer.registerRpc("test",serverRpc);
     initializer.registerRpc("deliy",rpcReward);
     initializer.registerRpc("turn",rpcHandleMatchEnd);
+    initializer.registerRpc("JoinOrCreateMatchRpc", joinOrCreateMatch);
+
     logger.debug("Rro7orRR");
     initializer.registerMatch(moduleName, {
       matchInit,

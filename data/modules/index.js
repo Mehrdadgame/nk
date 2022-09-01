@@ -4,6 +4,7 @@ var InitModule = function (ctx, logger, nk, initializer) {
     initializer.registerRpc("test", serverRpc);
     initializer.registerRpc("deliy", rpcReward);
     initializer.registerRpc("turn", rpcHandleMatchEnd);
+    initializer.registerRpc("JoinOrCreateMatchRpc", joinOrCreateMatch);
     logger.debug("Rro7orRR");
     initializer.registerMatch(moduleName, {
         matchInit: matchInit,
@@ -36,7 +37,7 @@ var OpCode;
     OpCode[OpCode["MOVE"] = 4] = "MOVE";
     OpCode[OpCode["REJECTED"] = 5] = "REJECTED";
 })(OpCode || (OpCode = {}));
-var moduleName = "tic-tac-toe_js";
+var moduleName = "match";
 var tickRate = 5;
 var maxEmptySec = 30;
 var delaybetweenGamesSec = 5;
@@ -58,6 +59,19 @@ var matchInit = function (ctx, logger, nk, params) {
         tickRate: 10,
         label: ""
     };
+};
+var joinOrCreateMatch = function (context, logger, nakama, payload) {
+    var matches;
+    var MatchesLimit = 1;
+    var MinimumPlayers = 1;
+    var MaxPlayers = 2;
+    var label = { open: 1, fast: 1 };
+    matches = nakama.matchList(MatchesLimit, true, JSON.stringify(label), MinimumPlayers, MaxPlayers);
+    if (matches.length > 0) {
+        logger.debug(matches[0].matchId);
+        return matches[0].matchId;
+    }
+    return nakama.matchCreate(moduleName);
 };
 var matchJoinAttempt = function (ctx, logger, nk, dispatcher, tick, state, presence, metadata) {
     if (presence.userId in state.presences) {
